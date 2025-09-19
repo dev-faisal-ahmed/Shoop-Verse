@@ -3,6 +3,7 @@ import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { UserEntity } from 'src/domain/user/user.entity';
 import { UserPrismaRepository } from 'src/infrastructure/user/user-prisma.repository';
+import { ID_GENERATOR_TOKEN, PASSWORD_HASHER_TOKEN } from './auth.token';
 
 // types
 type RegisterServicePayload = {
@@ -11,9 +12,7 @@ type RegisterServicePayload = {
   password: string;
 };
 
-export const ID_GENERATOR_TOKEN = Symbol('IIdGenerator');
-export const PASSWORD_HASHER_TOKEN = Symbol('IPasswordHasher');
-
+// The RegisterService handles business logic of registering a new user
 @Injectable()
 export class RegisterService {
   constructor(

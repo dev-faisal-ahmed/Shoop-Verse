@@ -1,6 +1,7 @@
 import {
   ITokenService,
-  TTokenPayload,
+  TAccessTokenPayload,
+  TRefreshTokenPayload,
 } from 'src/domain/user/token-service.interface';
 
 import { Injectable } from '@nestjs/common';
@@ -10,11 +11,19 @@ import { JwtService } from '@nestjs/jwt';
 export class JwtTokenService implements ITokenService {
   constructor(private readonly jwtService: JwtService) {}
 
-  generateToken(payload: TTokenPayload): Promise<string> {
-    return this.jwtService.signAsync(payload);
+  generateAccessToken({ payload, options }: TAccessTokenPayload): string {
+    return this.jwtService.sign(payload, options);
   }
 
-  verifyToken(token: string): Promise<TTokenPayload> {
-    return this.jwtService.verifyAsync(token);
+  verifyAccessToken(token: string): TAccessTokenPayload {
+    return this.jwtService.verify(token);
+  }
+
+  generateRefreshToken({ payload, options }: TRefreshTokenPayload): string {
+    return this.jwtService.sign(payload, options);
+  }
+
+  verifyRefreshToken(token: string): TRefreshTokenPayload {
+    return this.jwtService.verify(token);
   }
 }
