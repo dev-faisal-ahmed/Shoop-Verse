@@ -1,5 +1,4 @@
 import { CreateCategoryDto } from './dto';
-import { ApiResponseDto } from 'src/common/dto/api-response.dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CategoryEntity } from '../domain/category.entity';
 import { UnitOfWork } from 'src/unit-of-work';
@@ -9,26 +8,21 @@ export class CategoryService {
   constructor(private readonly uow: UnitOfWork) {}
 
   async createCategory(dto: CreateCategoryDto) {
-    const isCategoryExist = await this.uow.category.isCategoryExist(dto.name);
+    const isCategoryExist = await this.uow.category.existsByName(dto.name);
     if (isCategoryExist)
       throw new ConflictException('Category already exists!');
 
     const category = CategoryEntity.create(dto);
-    const createdCategory = await this.uow.category.createCategory(category);
+    const createdCategory = await this.uow.category.create(category);
 
-    return ApiResponseDto.success('Category created successfully', {
+    return {
       id: createdCategory.id,
       name: createdCategory.name,
       description: createdCategory.description,
-    });
+    };
   }
 
-  async getCategoriesWithProductsCount() {
-    const categories = await this.uow.category.getCategoriesWithProductCount();
-
-    return ApiResponseDto.success(
-      'Categories retrieved successfully',
-      categories,
-    );
+  async findAllWithProductCount() {
+    return this.uow.category.findAllWithProductCount();
   }
 }

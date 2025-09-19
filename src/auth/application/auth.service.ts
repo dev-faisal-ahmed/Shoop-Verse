@@ -8,7 +8,6 @@ import {
 import { RegisterDto } from './dto/register.dto';
 import { UnitOfWork } from 'src/unit-of-work';
 import { UserEntity } from '../domain/user.entity';
-import { ApiResponseDto } from 'src/common/dto/api-response.dto';
 import { LoginDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -20,22 +19,22 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const isUserExist = await this.uow.user.findUserByEmail(dto.email);
+    const isUserExist = await this.uow.user.findByEmail(dto.email);
 
     if (isUserExist) throw new ConflictException('User already exists');
 
     const user = await UserEntity.create(dto);
-    const createdUser = await this.uow.user.createUser(user);
+    const createdUser = await this.uow.user.create(user);
 
-    return ApiResponseDto.success('User created successfully', {
+    return {
       id: createdUser.id,
       email: createdUser.email,
       username: createdUser.username,
-    });
+    };
   }
 
   async login(dto: LoginDto) {
-    const user = await this.uow.user.findUserByEmail(dto.email);
+    const user = await this.uow.user.findByEmail(dto.email);
     if (!user) throw new NotFoundException('User not found');
 
     const isPasswordMatch = await user.comparePassword(dto.password);
@@ -48,6 +47,6 @@ export class AuthService {
       email: user.email,
     });
 
-    return ApiResponseDto.success('Login successful', { token });
+    return { token };
   }
 }

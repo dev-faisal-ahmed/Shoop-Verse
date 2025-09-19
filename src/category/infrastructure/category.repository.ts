@@ -6,8 +6,7 @@ import { CategoryEntity } from '../domain/category.entity';
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Create category
-  async createCategory(category: CategoryEntity): Promise<CategoryEntity> {
+  async create(category: CategoryEntity): Promise<CategoryEntity> {
     const created = await this.prisma.category.create({
       data: {
         id: category.id,
@@ -20,12 +19,12 @@ export class CategoryRepository {
       id: created.id,
       name: created.name,
       description: created.description,
+      // add createdAt/updatedAt if part of domain
     });
   }
 
-  // Get all categories with products count
-  async getCategoriesWithProductCount(): Promise<CategoryWithProductCount[]> {
-    const products = await this.prisma.category.findMany({
+  async findAllWithProductCount(): Promise<CategoryWithProductCountDto[]> {
+    const categories = await this.prisma.category.findMany({
       select: {
         id: true,
         name: true,
@@ -34,14 +33,16 @@ export class CategoryRepository {
       },
     });
 
-    return products.map(({ id, name, description, products }) => ({
-      category: new CategoryEntity({ id, name, description }),
-      productCount: products.length,
-    }));
+    return categories.map(
+      ({ id, name, description, products }) =>
+        new CategoryWithProductCountDto(
+          new CategoryEntity({ id, name, description }),
+          products.length,
+        ),
+    );
   }
 
-  // Helpers
-  async isCategoryExist(name: string): Promise<boolean> {
+  async existsByName(name: string): Promise<boolean> {
     const category = await this.prisma.category.findUnique({
       where: { name },
       select: { id: true },
@@ -51,8 +52,10 @@ export class CategoryRepository {
   }
 }
 
-// types
-type CategoryWithProductCount = {
-  category: CategoryEntity;
-  productCount: number;
-};
+// DTO for better clarity
+export class CategoryWithProductCountDto {
+  constructor(
+    public readonly category: CategoryEntity,
+    public readonly productCount: number,
+  ) {}
+}
