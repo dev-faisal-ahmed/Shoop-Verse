@@ -22,4 +22,13 @@ export class CategoryService {
       description: createdCategory.description,
     });
   }
+
+  async getCategoriesWithProductsCount() {
+    const categories = await this.uow.category.getCategoriesWithProductCount();
+
+    return ApiResponseDto.success(
+      'Categories retrieved successfully',
+      categories,
+    );
+  }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
+
 import { CategoryService } from './application/category.service';
 import { CreateCategoryDto } from './application/dto';
 
@@ -10,5 +18,11 @@ export class CategoryController {
   @HttpCode(HttpStatus.CREATED)
   async createCategory(@Body() dto: CreateCategoryDto) {
     return this.categoryService.createCategory(dto);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getCategoriesWithProductsCount() {
+    return this.categoryService.getCategoriesWithProductsCount();
   }
 }

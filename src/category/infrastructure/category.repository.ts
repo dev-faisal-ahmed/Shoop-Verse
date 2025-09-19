@@ -6,7 +6,7 @@ import { CategoryEntity } from '../domain/category.entity';
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // create category
+  // Create category
   async createCategory(category: CategoryEntity): Promise<CategoryEntity> {
     const created = await this.prisma.category.create({
       data: {
@@ -23,7 +23,24 @@ export class CategoryRepository {
     });
   }
 
-  // helpers
+  // Get all categories with products count
+  async getCategoriesWithProductCount(): Promise<CategoryWithProductCount[]> {
+    const products = await this.prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        products: { select: { id: true } },
+      },
+    });
+
+    return products.map(({ id, name, description, products }) => ({
+      category: new CategoryEntity({ id, name, description }),
+      productCount: products.length,
+    }));
+  }
+
+  // Helpers
   async isCategoryExist(name: string): Promise<boolean> {
     const category = await this.prisma.category.findUnique({
       where: { name },
@@ -33,3 +50,9 @@ export class CategoryRepository {
     return !!category;
   }
 }
+
+// types
+type CategoryWithProductCount = {
+  category: CategoryEntity;
+  productCount: number;
+};
