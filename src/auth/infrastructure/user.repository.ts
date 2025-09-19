@@ -6,6 +6,7 @@ import { UserEntity } from '../domain/user.entity';
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  // create user
   async createUser(user: UserEntity): Promise<UserEntity> {
     const newUser = await this.prisma.user.create({
       data: {
@@ -24,6 +25,7 @@ export class UserRepository {
     });
   }
 
+  // find user by email
   async findUserByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) return null;
