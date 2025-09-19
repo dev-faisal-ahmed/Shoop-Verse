@@ -8,11 +8,10 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.setGlobalPrefix('api');
 
   await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap().catch((err) => {
-  console.error('Failed to start application:', err);
-  process.exit(1);
-});
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+bootstrap();
