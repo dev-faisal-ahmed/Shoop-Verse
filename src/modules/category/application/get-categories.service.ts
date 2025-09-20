@@ -1,6 +1,10 @@
+import {
+  ICategoryRepository,
+  TCategoryWithProductCount,
+} from 'src/domain/category/category.repository.interface';
+
 import { Inject, Injectable } from '@nestjs/common';
 import { CATEGORY_REPOSITORY_TOKEN } from 'src/common/tokens';
-import { ICategoryRepository } from 'src/domain/category/category.repository.interface';
 
 @Injectable()
 export class GetCategoriesService {
@@ -8,4 +12,9 @@ export class GetCategoriesService {
     @Inject(CATEGORY_REPOSITORY_TOKEN)
     private readonly categoryRepository: ICategoryRepository,
   ) {}
+
+  async execute(): Promise<TCategoryWithProductCount[]> {
+    const categories = await this.categoryRepository.findAllWithProductCount();
+    return categories;
+  }
 }

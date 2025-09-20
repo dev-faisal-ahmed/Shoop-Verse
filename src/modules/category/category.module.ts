@@ -9,12 +9,14 @@ import { CategoryPrismaRepository } from 'src/infrastructure/category/category-p
 import { CryptoIdGenerator } from 'src/infrastructure/shared/crypto-id-generator';
 import { CategoryController } from './category.controller';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
+import { GetCategoriesService } from './application/get-categories.service';
 
 @Module({
   imports: [AuthGuardModule],
   controllers: [CategoryController],
   providers: [
     CreateCategoryService,
+    GetCategoriesService,
 
     { provide: CATEGORY_REPOSITORY_TOKEN, useClass: CategoryPrismaRepository },
     { provide: ID_GENERATOR_TOKEN, useClass: CryptoIdGenerator },
