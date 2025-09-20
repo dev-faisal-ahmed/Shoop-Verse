@@ -7,7 +7,7 @@ import {
 
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UnitOfWork } from 'src/unit-of-work';
+import { UserPrismaRepository } from 'src/infrastructure/user/user-prisma.repository';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly uow: UnitOfWork,
+    private readonly userRepository: UserPrismaRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify<TokenPayload>(token);
       if (!payload) throw new UnauthorizedException('Invalid token');
 
-      const user = await this.uow.user.findByEmail(payload.email);
+      const user = await this.userRepository.findByEmail(payload.email);
       if (!user) throw new UnauthorizedException('User not found');
       request['user'] = user;
       return true;

@@ -1,21 +1,29 @@
-export type TAccessTokenPayload = {
-  payload: { id: string; name: string; email: string };
-  options: TTokenOptions;
-};
-
-export type TRefreshTokenPayload = {
-  payload: { id: string };
-  options: TTokenOptions;
-};
-
 type TTokenOptions = {
   expiresIn: string;
   secret: string;
 };
 
+export type TAccessTokenPayload = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type TRefreshTokenPayload = {
+  id: string;
+};
+
+type TokenCreationData<T> = {
+  payload: T;
+  options: TTokenOptions;
+};
+
+export type AccessTokenCreationData = TokenCreationData<TAccessTokenPayload>;
+export type RefreshTokenCreationData = TokenCreationData<TRefreshTokenPayload>;
+
 export abstract class ITokenService {
-  abstract generateAccessToken(payload: TAccessTokenPayload): string;
+  abstract generateAccessToken(payload: AccessTokenCreationData): string;
   abstract verifyAccessToken(token: string): TAccessTokenPayload;
-  abstract generateRefreshToken(payload: TRefreshTokenPayload): string;
+  abstract generateRefreshToken(payload: RefreshTokenCreationData): string;
   abstract verifyRefreshToken(token: string): TRefreshTokenPayload;
 }
