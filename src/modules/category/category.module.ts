@@ -5,8 +5,10 @@ import { CategoryPrismaRepository } from 'src/infrastructure/category/category-p
 import { CryptoIdGenerator } from 'src/infrastructure/shared/crypto-id-generator';
 import { CategoryController } from './category.controller';
 import { ID_GENERATOR_TOKEN } from 'src/common/constants';
+import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 
 @Module({
+  imports: [AuthGuardModule],
   controllers: [CategoryController],
   providers: [
     CreateCategoryService,

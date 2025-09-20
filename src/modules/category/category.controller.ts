@@ -1,13 +1,23 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+
 import { CreateCategoryService } from './application/create-category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ApiResponseDto } from 'src/common/dto/api-response.dto';
+import { AuthGuard } from 'src/common/guard/auth.guard';
 
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly createCategoryService: CreateCategoryService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createCategory(@Body() dto: CreateCategoryDto) {
     const response = await this.createCategoryService.execute(dto);

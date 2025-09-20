@@ -3,28 +3,39 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 
-import { JwtService } from '@nestjs/jwt';
+import {
+  TOKEN_SERVICE_TOKEN,
+  USER_REPOSITORY_TOKEN,
+} from 'src/modules/auth/application/auth.token';
+
 import { Request } from 'express';
-import { UserPrismaRepository } from 'src/infrastructure/user/user-prisma.repository';
+import { ITokenService } from 'src/domain/user/token-service.interface';
+import { IUserRepository } from 'src/domain/user/user.repository.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   private bearer = 'bearer';
 
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly userRepository: UserPrismaRepository,
+    @Inject(TOKEN_SERVICE_TOKEN)
+    private readonly tokenService: ITokenService,
+    @Inject(USER_REPOSITORY_TOKEN)
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractToken(request);
-    if (!token) throw new UnauthorizedException('No token has been provided');
+    if (!token)
+      throw new UnauthorizedException(
+        'No token has been provided, please provide a token',
+      );
 
     try {
-      const payload = this.jwtService.verify<TokenPayload>(token);
+      const payload = this.tokenService.verifyAccessToken(token);
       if (!payload) throw new UnauthorizedException('Invalid token');
 
       const user = await this.userRepository.findByEmail(payload.email);
@@ -39,11 +50,9 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractToken(request: Request): string {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    const authorization = request.headers.authorization ?? '';
+    const [type, token] = authorization.split(' ');
     if (type.toLowerCase() !== this.bearer) return '';
     return token;
   }
 }
-
-// type
-type TokenPayload = { id: string; name: string; email: string };

@@ -12,7 +12,6 @@ import {
 } from './auth.token';
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { ITokenService } from 'src/domain/user/token-service.interface';
-import { jwtConstants } from '../auth.constant';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
 
 type LoginServicePayload = {
@@ -51,19 +50,13 @@ export class LoginService {
       throw new UnauthorizedException('Invalid credentials.');
 
     const accessToken = this.tokenService.generateAccessToken({
-      payload: { id: user.id, name: user.username, email: user.email },
-      options: {
-        expiresIn: jwtConstants.accessTokenExpiresIn!,
-        secret: jwtConstants.accessTokenSecret!,
-      },
+      id: user.id,
+      name: user.username,
+      email: user.email,
     });
 
     const refreshToken = this.tokenService.generateRefreshToken({
-      payload: { id: user.id },
-      options: {
-        expiresIn: jwtConstants.refreshTokenExpiresIn!,
-        secret: jwtConstants.refreshTokenSecret!,
-      },
+      id: user.id,
     });
 
     return { accessToken, refreshToken };

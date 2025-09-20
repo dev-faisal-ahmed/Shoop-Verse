@@ -7,7 +7,6 @@ import {
 
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
-import { jwtConstants } from '../auth.constant';
 import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from './auth.token';
 
 @Injectable()
@@ -27,11 +26,9 @@ export class RefreshTokenService {
     if (!user) throw new NotFoundException('User not found!');
 
     const accessToken = this.tokenService.generateAccessToken({
-      payload: { id: user.id, email: user.email, name: user.username },
-      options: {
-        expiresIn: jwtConstants.accessTokenExpiresIn!,
-        secret: jwtConstants.accessTokenSecret!,
-      },
+      id: user.id,
+      email: user.email,
+      name: user.username,
     });
 
     return { accessToken };
