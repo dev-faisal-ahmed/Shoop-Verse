@@ -1,3 +1,5 @@
+import { IPasswordHasher } from './password-hasher.interface';
+
 export type TUserProps = {
   id: string;
   email: string;
@@ -22,7 +24,19 @@ export class UserEntity {
     return new UserEntity(props);
   }
 
-  getPassword(): string {
-    return this.password;
+  async comparePassword(
+    plainPassword: string,
+    hasher: IPasswordHasher,
+  ): Promise<boolean> {
+    return hasher.compare(plainPassword, this.password);
+  }
+
+  toPersistence(): TUserProps {
+    return {
+      id: this.id,
+      email: this.email,
+      username: this.username,
+      password: this.password,
+    };
   }
 }

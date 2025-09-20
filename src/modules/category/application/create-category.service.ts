@@ -25,9 +25,8 @@ export class CreateCategoryService {
   async execute(
     payload: CreateCategoryServicePayload,
   ): Promise<CategoryEntity> {
-    const existingCategory = await this.categoryRepository.isCategoryExist(
-      payload.name,
-    );
+    const existingCategory =
+      await this.categoryRepository.isCategoryExistByName(payload.name);
 
     if (existingCategory)
       throw new ConflictException('Category already exists.');

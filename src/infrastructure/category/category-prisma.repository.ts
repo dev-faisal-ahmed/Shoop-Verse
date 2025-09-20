@@ -29,13 +29,26 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return this.toDomain(prismaCategory);
   }
 
-  async isCategoryExist(name: string): Promise<boolean> {
+  async isCategoryExistByName(name: string): Promise<boolean> {
     const category = await this.prismaService.category.findUnique({
       where: { name },
       select: { id: true },
     });
 
     return !!category;
+  }
+
+  async update(category: CategoryEntity): Promise<CategoryEntity> {
+    const prismaCategory = await this.prismaService.category.update({
+      where: { id: category.id },
+      data: {
+        name: category.name,
+        description: category.description,
+      },
+      select: this.getSelect(),
+    });
+
+    return this.toDomain(prismaCategory);
   }
 
   async findAllWithProductCount(): Promise<TCategoryWithProductCount[]> {

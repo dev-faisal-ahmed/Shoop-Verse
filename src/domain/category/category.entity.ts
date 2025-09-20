@@ -6,8 +6,8 @@ export type TCategoryProps = {
 
 export class CategoryEntity {
   public readonly id: string;
-  public readonly name: string;
-  public readonly description: string;
+  public name: string;
+  public description: string;
 
   constructor({ id, name, description }: TCategoryProps) {
     this.id = id;
@@ -17,5 +17,9 @@ export class CategoryEntity {
 
   static create(props: TCategoryProps): CategoryEntity {
     return new CategoryEntity(props);
+  }
+
+  update(props: Partial<TCategoryProps>): CategoryEntity {
+    return CategoryEntity.create({ ...this, ...props });
   }
 }

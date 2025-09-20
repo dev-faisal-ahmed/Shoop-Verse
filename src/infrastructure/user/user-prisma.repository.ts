@@ -15,22 +15,17 @@ export class UserPrismaRepository implements IUserRepository {
 
   async create(user: UserEntity): Promise<UserEntity> {
     const prismaUser = await this.prisma.user.create({
-      data: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        password: user.getPassword(),
-      },
-      select: this.getSelect(),
+      data: user.toPersistence(),
+      select: { id: true, email: true, username: true },
     });
 
-    return this.toDomain(prismaUser);
+    return this.toDomain({ ...prismaUser, password: '' });
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const prismaUser = await this.prisma.user.findUnique({
       where: { email },
-      select: this.getSelect(),
+      select: { id: true, email: true, username: true, password: true },
     });
 
     if (!prismaUser) return null;
@@ -40,11 +35,11 @@ export class UserPrismaRepository implements IUserRepository {
   async findById(id: string): Promise<UserEntity | null> {
     const prismaUser = await this.prisma.user.findUnique({
       where: { id },
-      select: this.getSelect(),
+      select: { id: true, email: true, username: true },
     });
 
     if (!prismaUser) return null;
-    return this.toDomain(prismaUser);
+    return this.toDomain({ ...prismaUser, password: '' });
   }
 
   async isUserExist(email: string): Promise<boolean> {
@@ -64,9 +59,5 @@ export class UserPrismaRepository implements IUserRepository {
       username: user.username,
       password: user.password,
     });
-  }
-
-  private getSelect(): Prisma.UserSelect {
-    return { id: true, username: true, email: true, password: true };
   }
 }

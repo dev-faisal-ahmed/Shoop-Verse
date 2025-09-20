@@ -7,7 +7,8 @@ export type TCategoryWithProductCount = {
 
 export abstract class ICategoryRepository {
   abstract create(category: CategoryEntity): Promise<CategoryEntity>;
-  abstract isCategoryExist(name: string): Promise<boolean>;
+  abstract isCategoryExistByName(name: string): Promise<boolean>;
   abstract findAllWithProductCount(): Promise<TCategoryWithProductCount[]>;
   abstract findById(id: string): Promise<CategoryEntity | null>;
+  abstract update(category: CategoryEntity): Promise<CategoryEntity>;
 }

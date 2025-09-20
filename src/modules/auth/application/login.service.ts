@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import {
   PASSWORD_HASHER_TOKEN,
   TOKEN_SERVICE_TOKEN,
@@ -41,9 +42,9 @@ export class LoginService {
 
     if (!user) throw new NotFoundException('User not found.');
 
-    const isPasswordValid = await this.passwordHasher.compare(
+    const isPasswordValid = await user.comparePassword(
       payload.password,
-      user.getPassword(),
+      this.passwordHasher,
     );
 
     if (!isPasswordValid)

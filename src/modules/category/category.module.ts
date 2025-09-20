@@ -4,12 +4,13 @@ import {
 } from 'src/common/tokens';
 
 import { Module } from '@nestjs/common';
-import { CreateCategoryService } from './application/create-category.service';
 import { CategoryPrismaRepository } from 'src/infrastructure/category/category-prisma.repository';
 import { CryptoIdGenerator } from 'src/infrastructure/shared/crypto-id-generator';
 import { CategoryController } from './category.controller';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
+import { CreateCategoryService } from './application/create-category.service';
 import { GetCategoriesService } from './application/get-categories.service';
+import { UpdateCategoryService } from './application/update-category.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -17,6 +18,7 @@ import { GetCategoriesService } from './application/get-categories.service';
   providers: [
     CreateCategoryService,
     GetCategoriesService,
+    UpdateCategoryService,
 
     { provide: CATEGORY_REPOSITORY_TOKEN, useClass: CategoryPrismaRepository },
     { provide: ID_GENERATOR_TOKEN, useClass: CryptoIdGenerator },
