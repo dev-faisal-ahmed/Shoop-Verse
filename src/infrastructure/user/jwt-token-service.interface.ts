@@ -6,41 +6,35 @@ import {
 
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConfig } from 'src/common/config';
 
 @Injectable()
 export class JwtTokenService implements ITokenService {
-  private readonly jwtConstants = {
-    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
-    accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
-    refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
-    refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
-  };
-
   constructor(private readonly jwtService: JwtService) {}
 
   generateAccessToken(payload: TAccessTokenPayload): string {
     return this.jwtService.sign(payload, {
-      secret: this.jwtConstants.accessTokenSecret,
-      expiresIn: this.jwtConstants.accessTokenExpiresIn,
+      secret: jwtConfig.accessTokenSecret,
+      expiresIn: jwtConfig.accessTokenExpiresIn,
     });
   }
 
   verifyAccessToken(token: string): TAccessTokenPayload {
     return this.jwtService.verify(token, {
-      secret: this.jwtConstants.accessTokenSecret,
+      secret: jwtConfig.accessTokenSecret,
     });
   }
 
   generateRefreshToken(payload: TRefreshTokenPayload): string {
     return this.jwtService.sign(payload, {
-      secret: this.jwtConstants.refreshTokenSecret,
-      expiresIn: this.jwtConstants.refreshTokenExpiresIn,
+      secret: jwtConfig.refreshTokenSecret,
+      expiresIn: jwtConfig.refreshTokenExpiresIn,
     });
   }
 
   verifyRefreshToken(token: string): TRefreshTokenPayload {
     return this.jwtService.verify(token, {
-      secret: this.jwtConstants.refreshTokenSecret,
+      secret: jwtConfig.refreshTokenSecret,
     });
   }
 }
