@@ -20,6 +20,14 @@ export class CategoryEntity {
   }
 
   update(props: Partial<TCategoryProps>): CategoryEntity {
-    return CategoryEntity.create({ ...this, ...props });
+    return CategoryEntity.create({
+      id: this.id,
+      name: props.name ?? this.name,
+      description: props.description ?? this.description,
+    });
+  }
+
+  toPersistence(): TCategoryProps {
+    return { id: this.id, name: this.name, description: this.description };
   }
 }

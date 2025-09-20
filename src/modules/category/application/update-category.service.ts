@@ -25,7 +25,7 @@ export class UpdateCategoryService {
     const category = await this.categoryRepository.findById(id);
     if (!category) throw new NotFoundException('Category not found!');
 
-    if (payload.name) {
+    if (payload.name && category.name !== payload.name) {
       const categoryByName =
         await this.categoryRepository.isCategoryExistByName(payload.name);
 
