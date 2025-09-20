@@ -39,7 +39,8 @@ model Product {
   price       Float
   stock       Int
   categoryId  String
-  image       String?
+  imageUrl    String?
+  imageId     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

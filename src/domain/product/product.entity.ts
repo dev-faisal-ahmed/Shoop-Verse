@@ -3,7 +3,9 @@ export type TProductProps = {
   name: string;
   description: string;
   price: number;
-  image: string;
+  stock: number;
+  imageUrl: string;
+  imageId: string;
   categoryId: string;
 };
 
@@ -12,7 +14,9 @@ export class ProductEntity {
   private readonly name: string;
   private readonly description: string;
   private readonly price: number;
-  private readonly image: string;
+  private readonly stock: number;
+  private readonly imageUrl: string;
+  protected readonly imageId: string;
   private readonly categoryId: string;
 
   private constructor(props: TProductProps) {
@@ -20,7 +24,9 @@ export class ProductEntity {
     this.name = props.name;
     this.description = props.description;
     this.price = props.price;
-    this.image = props.image;
+    this.imageUrl = props.imageUrl;
+    this.imageId = props.imageId;
+    this.stock = props.stock;
     this.categoryId = props.categoryId;
   }
 
@@ -34,7 +40,9 @@ export class ProductEntity {
       name: this.name,
       description: this.description,
       price: this.price,
-      image: this.image,
+      stock: this.stock,
+      imageUrl: this.imageUrl,
+      imageId: this.imageId,
       categoryId: this.categoryId,
     };
   }

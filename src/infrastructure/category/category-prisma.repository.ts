@@ -90,11 +90,11 @@ export class CategoryPrismaRepository implements ICategoryRepository {
   }
 
   // helper
-  private toDomain(prismaCategory: CategoryModel): CategoryEntity {
+  private toDomain(category: CategoryModel): CategoryEntity {
     return CategoryEntity.create({
-      id: prismaCategory.id,
-      name: prismaCategory.name,
-      description: prismaCategory.description,
+      id: category.id,
+      name: category.name,
+      description: category.description,
     });
   }
 

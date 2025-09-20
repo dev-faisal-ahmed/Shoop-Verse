@@ -27,6 +27,7 @@ export class ProductController {
       ...dto,
       imageFile: file,
     });
+
     return ApiResponseDto.success('Product created successfully', response);
   }
 }

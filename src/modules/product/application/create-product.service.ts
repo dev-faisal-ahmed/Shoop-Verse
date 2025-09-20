@@ -1,6 +1,14 @@
+import {
+  FILE_UPLOADER_TOKEN,
+  ID_GENERATOR_TOKEN,
+  PRODUCT_REPOSITORY_TOKEN,
+} from 'src/common/tokens';
+
 import { Inject, Injectable } from '@nestjs/common';
-import { FILE_UPLOADER_TOKEN } from 'src/common/tokens';
+import { ProductEntity } from 'src/domain/product/product.entity';
+import { IProductRepository } from 'src/domain/product/product.repository.interface';
 import { IFileUploader } from 'src/domain/shared/file-uploader.interface';
+import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 
 type TCreateProductService = {
   name: string;
@@ -14,16 +22,41 @@ type TCreateProductService = {
 @Injectable()
 export class CreateProductService {
   constructor(
-    @Inject(FILE_UPLOADER_TOKEN) private fileUploader: IFileUploader,
+    @Inject(FILE_UPLOADER_TOKEN)
+    private fileUploader: IFileUploader,
+    @Inject(ID_GENERATOR_TOKEN)
+    private idGenerator: IIdGenerator,
+    @Inject(PRODUCT_REPOSITORY_TOKEN)
+    private productRepository: IProductRepository,
   ) {}
 
-  async execute(payload: TCreateProductService) {
+  async execute({ imageFile, ...payload }: TCreateProductService) {
     let imageUrl = '';
-    if (payload.imageFile) {
-      imageUrl = await this.fileUploader.upload(payload.imageFile);
-      console.log('Image uploaded to:', imageUrl);
-    }
+    let imageId = '';
 
-    return { imageUrl };
+    console.log(payload);
+
+    try {
+      if (imageFile) {
+        const response = await this.fileUploader.upload(imageFile);
+        if (response) {
+          imageUrl = response.url;
+          imageId = response.id;
+        }
+      }
+
+      const product = ProductEntity.create({
+        id: this.idGenerator.generate(),
+        ...payload,
+        imageId,
+        imageUrl,
+      });
+
+      return await this.productRepository.createProduct(product);
+    } catch (error) {
+      // delete image if product creation fails
+      if (imageId) void this.fileUploader.delete(imageId);
+      throw error;
+    }
   }
 }

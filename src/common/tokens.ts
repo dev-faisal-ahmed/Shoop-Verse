@@ -6,6 +6,9 @@ export const PASSWORD_HASHER_TOKEN = Symbol('IPasswordHasher');
 // Category Tokens
 export const CATEGORY_REPOSITORY_TOKEN = Symbol('ICategoryRepository');
 
+// Product Tokens
+export const PRODUCT_REPOSITORY_TOKEN = Symbol('IProductRepository');
+
 // Shared Service Tokens
 export const FILE_UPLOADER_TOKEN = Symbol('IFileUploader');
 export const ID_GENERATOR_TOKEN = Symbol('IIdGenerator');

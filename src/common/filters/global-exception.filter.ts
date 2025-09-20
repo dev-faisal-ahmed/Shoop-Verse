@@ -8,6 +8,7 @@ import {
 
 import { Response } from 'express';
 import { ApiResponseDto } from '../dto/api-response.dto';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -15,9 +16,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    console.log(exception);
-
-    const status =
+    let status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -31,6 +30,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       else if (typeof errorResponse.message === 'string')
         message = errorResponse.message;
     }
+
+    if (exception instanceof PrismaClientValidationError) {
+      // Extract meaningful info
+      const match = exception.message.match(/Argument `(.+?)` is missing/);
+      if (match) {
+        message = `Field "${match[1]}" is required`;
+        status = HttpStatus.BAD_REQUEST;
+      } else {
+        // fallback
+        message = exception.message;
+        status = HttpStatus.BAD_REQUEST;
+      }
+    }
+
+    console.log('Exception: ', exception);
 
     response.status(status).json(ApiResponseDto.error(message));
   }
