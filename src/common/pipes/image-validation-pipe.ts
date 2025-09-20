@@ -10,5 +10,6 @@ export function ImageValidationPipe(maxSizeMB = 1) {
       new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
       new MaxFileSizeValidator({ maxSize: maxSizeMB * 1024 * 1024 }),
     ],
+    fileIsRequired: false,
   });
 }

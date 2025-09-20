@@ -17,4 +17,9 @@ export class ApiResponseDto {
   }
 }
 
-type TMeta = { page: number; limit: number; total: number; totalPage: number };
+export type TMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage: number;
+};

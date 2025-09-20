@@ -1,6 +1,11 @@
+import {
+  IProductRepository,
+  TProductFilter,
+  TProductWithPagination,
+} from 'src/domain/product/product.repository.interface';
+
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
-import { IProductRepository } from 'src/domain/product/product.repository.interface';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { ProductEntity } from 'src/domain/product/product.entity';
 
@@ -26,6 +31,38 @@ export class ProductPrismaRepository implements IProductRepository {
       data: product.toPersistence(),
     });
     return this.toDomain(prismaProduct);
+  }
+
+  async findAll(filter: TProductFilter): Promise<TProductWithPagination> {
+    const { categoryId, minPrice, maxPrice, page = 1, limit = 10 } = filter;
+
+    const where: Prisma.ProductWhereInput = {
+      ...(categoryId && { categoryId }),
+      ...((minPrice !== undefined || maxPrice !== undefined) && {
+        price: {
+          ...(minPrice !== undefined && { gte: minPrice }),
+          ...(maxPrice !== undefined && { lte: maxPrice }),
+        },
+      }),
+    };
+
+    const products = await this.prisma.product.findMany({
+      where,
+      select: this.getSelect(),
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const total = await this.prisma.product.count({ where });
+    const totalPage = Math.ceil(total / limit);
+
+    const productEntities = products.map((product) => this.toDomain(product));
+
+    return {
+      products: productEntities,
+      meta: { page, limit, total, totalPage },
+    };
   }
 
   // helpers
