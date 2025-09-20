@@ -19,6 +19,7 @@ import { GetCategoriesService } from './application/get-categories.service';
 import { UpdateCategoryService } from './application/update-category.service';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { DeleteCategoryService } from './application/delete-category.service';
+import { GetCategoryDetailsService } from './application/get-category-details.service';
 
 @UseGuards(AuthGuard)
 @Controller('categories')
@@ -28,6 +29,7 @@ export class CategoryController {
     private readonly getCategoriesService: GetCategoriesService,
     private readonly updateCategoryService: UpdateCategoryService,
     private readonly deleteCategoryService: DeleteCategoryService,
+    private readonly getCategoryDetailsService: GetCategoryDetailsService,
   ) {}
 
   @Post()
@@ -42,6 +44,17 @@ export class CategoryController {
   async getCategories() {
     const response = await this.getCategoriesService.execute();
     return ApiResponseDto.success('Categories fetched successfully', response);
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getCategoryDetails(@Param('id') id: string) {
+    const response = await this.getCategoryDetailsService.execute(id);
+
+    return ApiResponseDto.success(
+      'Category details fetched successfully',
+      response,
+    );
   }
 
   @Put(':id')
