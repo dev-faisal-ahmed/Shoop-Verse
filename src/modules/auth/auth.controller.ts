@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 
 import type { Response, Request } from 'express';
-import { RegisterDto } from './dto';
 import { ApiResponseDto } from 'src/common/dto/api-response.dto';
 import { RegisterService } from './application/register.service';
-import { LoginDto } from './dto/login.dto';
 import { LoginService } from './application/login.service';
 import { RefreshTokenService } from './application/refresh.token.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {

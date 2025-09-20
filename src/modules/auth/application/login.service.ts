@@ -5,7 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { PASSWORD_HASHER_TOKEN, TOKEN_SERVICE_TOKEN } from './auth.token';
+import {
+  PASSWORD_HASHER_TOKEN,
+  TOKEN_SERVICE_TOKEN,
+  USER_REPOSITORY_TOKEN,
+} from './auth.token';
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { jwtConstants } from '../auth.constant';
@@ -25,6 +29,7 @@ type LoginServiceResponse = {
 @Injectable()
 export class LoginService {
   constructor(
+    @Inject(USER_REPOSITORY_TOKEN)
     private readonly userRepository: IUserRepository,
     @Inject(PASSWORD_HASHER_TOKEN)
     private readonly passwordHasher: IPasswordHasher,
@@ -32,9 +37,7 @@ export class LoginService {
     private readonly tokenService: ITokenService,
   ) {}
 
-  public async login(
-    payload: LoginServicePayload,
-  ): Promise<LoginServiceResponse> {
+  async login(payload: LoginServicePayload): Promise<LoginServiceResponse> {
     const user = await this.userRepository.findByEmail(payload.email);
 
     if (!user) throw new NotFoundException('User not found.');

@@ -8,17 +8,18 @@ import {
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
 import { jwtConstants } from '../auth.constant';
-import { TOKEN_SERVICE_TOKEN } from './auth.token';
+import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from './auth.token';
 
 @Injectable()
 export class RefreshTokenService {
   constructor(
+    @Inject(USER_REPOSITORY_TOKEN)
     private readonly userRepository: IUserRepository,
     @Inject(TOKEN_SERVICE_TOKEN)
     private readonly tokenService: ITokenService,
   ) {}
 
-  public async execute(token: string) {
+  async execute(token: string) {
     const payload = this.tokenService.verifyRefreshToken(token);
     if (!payload?.id) throw new UnauthorizedException('Invalid token');
 

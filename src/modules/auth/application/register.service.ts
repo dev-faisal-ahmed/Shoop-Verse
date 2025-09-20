@@ -2,8 +2,9 @@ import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { UserEntity } from 'src/domain/user/user.entity';
-import { ID_GENERATOR_TOKEN, PASSWORD_HASHER_TOKEN } from './auth.token';
+import { PASSWORD_HASHER_TOKEN, USER_REPOSITORY_TOKEN } from './auth.token';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
+import { ID_GENERATOR_TOKEN } from 'src/common/constants';
 
 // types
 type RegisterServicePayload = {
@@ -16,6 +17,7 @@ type RegisterServicePayload = {
 @Injectable()
 export class RegisterService {
   constructor(
+    @Inject(USER_REPOSITORY_TOKEN)
     private readonly userRepository: IUserRepository,
     @Inject(ID_GENERATOR_TOKEN)
     private readonly idGenerator: IIdGenerator,
@@ -23,23 +25,19 @@ export class RegisterService {
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
-  public async execute(payload: RegisterServicePayload): Promise<UserEntity> {
+  async execute(payload: RegisterServicePayload): Promise<UserEntity> {
     const existingUser = await this.userRepository.findByEmail(payload.email);
     if (existingUser)
       throw new ConflictException('User with this email already exists.');
 
     const passwordHash = await this.passwordHasher.hash(payload.password);
 
-    const userId = this.idGenerator.generate();
-
     const newUser = UserEntity.create({
+      id: this.idGenerator.generate(),
       ...payload,
-      id: userId,
       password: passwordHash,
     });
 
-    const savedUser = await this.userRepository.create(newUser);
-
-    return savedUser;
+    return await this.userRepository.create(newUser);
   }
 }
