@@ -69,6 +69,26 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return this.toDomain(category);
   }
 
+  async findOneWithProductCount(
+    id: string,
+  ): Promise<TCategoryWithProductCount | null> {
+    const category = await this.prismaService.category.findUnique({
+      where: { id },
+      select: { ...this.getSelect(), products: { select: { id: true } } },
+    });
+
+    if (!category) return null;
+
+    return {
+      category: this.toDomain(category),
+      productCount: category.products.length,
+    };
+  }
+
+  async deleteOne(id: string): Promise<void> {
+    await this.prismaService.category.delete({ where: { id } });
+  }
+
   // helper
   private toDomain(prismaCategory: CategoryModel): CategoryEntity {
     return CategoryEntity.create({

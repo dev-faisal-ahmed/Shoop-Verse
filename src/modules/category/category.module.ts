@@ -11,6 +11,7 @@ import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 import { CreateCategoryService } from './application/create-category.service';
 import { GetCategoriesService } from './application/get-categories.service';
 import { UpdateCategoryService } from './application/update-category.service';
+import { DeleteCategoryService } from './application/delete-category.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -19,6 +20,7 @@ import { UpdateCategoryService } from './application/update-category.service';
     CreateCategoryService,
     GetCategoriesService,
     UpdateCategoryService,
+    DeleteCategoryService,
 
     { provide: CATEGORY_REPOSITORY_TOKEN, useClass: CategoryPrismaRepository },
     { provide: ID_GENERATOR_TOKEN, useClass: CryptoIdGenerator },

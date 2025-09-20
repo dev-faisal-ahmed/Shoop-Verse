@@ -11,4 +11,10 @@ export abstract class ICategoryRepository {
   abstract findAllWithProductCount(): Promise<TCategoryWithProductCount[]>;
   abstract findById(id: string): Promise<CategoryEntity | null>;
   abstract update(category: CategoryEntity): Promise<CategoryEntity>;
+
+  abstract findOneWithProductCount(
+    id: string,
+  ): Promise<TCategoryWithProductCount | null>;
+
+  abstract deleteOne(id: string): Promise<void>;
 }

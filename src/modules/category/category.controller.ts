@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -17,6 +18,7 @@ import { AuthGuard } from 'src/common/guard/auth.guard';
 import { GetCategoriesService } from './application/get-categories.service';
 import { UpdateCategoryService } from './application/update-category.service';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { DeleteCategoryService } from './application/delete-category.service';
 
 @UseGuards(AuthGuard)
 @Controller('categories')
@@ -25,6 +27,7 @@ export class CategoryController {
     private readonly createCategoryService: CreateCategoryService,
     private readonly getCategoriesService: GetCategoriesService,
     private readonly updateCategoryService: UpdateCategoryService,
+    private readonly deleteCategoryService: DeleteCategoryService,
   ) {}
 
   @Post()
@@ -49,5 +52,12 @@ export class CategoryController {
   ) {
     const response = await this.updateCategoryService.execute({ id, ...dto });
     return ApiResponseDto.success('Category updated successfully', response);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteCategory(@Param('id') id: string) {
+    await this.deleteCategoryService.execute(id);
+    return ApiResponseDto.success('Category deleted successfully');
   }
 }
