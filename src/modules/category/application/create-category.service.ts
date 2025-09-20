@@ -1,8 +1,11 @@
+import {
+  CATEGORY_REPOSITORY_TOKEN,
+  ID_GENERATOR_TOKEN,
+} from 'src/common/tokens';
+
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { ICategoryRepository } from 'src/domain/category/category.repository.interface';
-import { CATEGORY_REPOSITORY_TOKEN } from './category.token';
 import { CategoryEntity } from 'src/domain/category/category.entity';
-import { ID_GENERATOR_TOKEN } from 'src/common/constants';
 import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 
 type CreateCategoryServicePayload = {

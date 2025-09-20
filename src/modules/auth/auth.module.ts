@@ -1,11 +1,11 @@
 import {
+  ID_GENERATOR_TOKEN,
   PASSWORD_HASHER_TOKEN,
   TOKEN_SERVICE_TOKEN,
   USER_REPOSITORY_TOKEN,
-} from './application/auth.token';
+} from 'src/common/tokens';
 
 import { Module } from '@nestjs/common';
-import { ID_GENERATOR_TOKEN } from 'src/common/constants';
 import { AuthController } from './auth.controller';
 import { RegisterService } from './application/register.service';
 import { LoginService } from './application/login.service';

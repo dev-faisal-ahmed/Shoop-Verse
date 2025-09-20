@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from 'src/common/tokens';
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
-import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from './auth.token';
 
 @Injectable()
 export class RefreshTokenService {

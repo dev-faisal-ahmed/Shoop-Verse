@@ -1,12 +1,8 @@
-import {
-  TOKEN_SERVICE_TOKEN,
-  USER_REPOSITORY_TOKEN,
-} from 'src/modules/auth/application/auth.token';
-
 import { Module } from '@nestjs/common';
 import { JwtTokenService } from 'src/infrastructure/user/jwt-token-service.interface';
 import { UserPrismaRepository } from 'src/infrastructure/user/user-prisma.repository';
 import { AuthGuard } from './auth.guard';
+import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from '../tokens';
 
 @Module({
   providers: [

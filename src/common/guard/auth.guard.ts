@@ -6,14 +6,10 @@ import {
   Inject,
 } from '@nestjs/common';
 
-import {
-  TOKEN_SERVICE_TOKEN,
-  USER_REPOSITORY_TOKEN,
-} from 'src/modules/auth/application/auth.token';
-
 import { Request } from 'express';
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
+import { TOKEN_SERVICE_TOKEN, USER_REPOSITORY_TOKEN } from '../tokens';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

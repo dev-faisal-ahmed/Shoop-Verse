@@ -1,10 +1,13 @@
+import {
+  CATEGORY_REPOSITORY_TOKEN,
+  ID_GENERATOR_TOKEN,
+} from 'src/common/tokens';
+
 import { Module } from '@nestjs/common';
 import { CreateCategoryService } from './application/create-category.service';
-import { CATEGORY_REPOSITORY_TOKEN } from './application/category.token';
 import { CategoryPrismaRepository } from 'src/infrastructure/category/category-prisma.repository';
 import { CryptoIdGenerator } from 'src/infrastructure/shared/crypto-id-generator';
 import { CategoryController } from './category.controller';
-import { ID_GENERATOR_TOKEN } from 'src/common/constants';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 
 @Module({

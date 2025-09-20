@@ -1,10 +1,14 @@
+import {
+  ID_GENERATOR_TOKEN,
+  PASSWORD_HASHER_TOKEN,
+  USER_REPOSITORY_TOKEN,
+} from 'src/common/tokens';
+
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { UserEntity } from 'src/domain/user/user.entity';
-import { PASSWORD_HASHER_TOKEN, USER_REPOSITORY_TOKEN } from './auth.token';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
-import { ID_GENERATOR_TOKEN } from 'src/common/constants';
 
 // types
 type RegisterServicePayload = {

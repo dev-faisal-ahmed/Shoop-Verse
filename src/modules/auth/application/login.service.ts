@@ -4,12 +4,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-
 import {
   PASSWORD_HASHER_TOKEN,
   TOKEN_SERVICE_TOKEN,
   USER_REPOSITORY_TOKEN,
-} from './auth.token';
+} from 'src/common/tokens';
+
 import { IPasswordHasher } from 'src/domain/user/password-hasher.interface';
 import { ITokenService } from 'src/domain/user/token-service.interface';
 import { IUserRepository } from 'src/domain/user/user.repository.interface';
