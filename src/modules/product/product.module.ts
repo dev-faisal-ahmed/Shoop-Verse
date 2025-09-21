@@ -14,6 +14,7 @@ import { GetProductsService } from './application/get-products.service';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 import { GetSingleProductService } from './application/get-single-product.service';
 import { UpdateProductService } from './application/update-product.service';
+import { DeleteProductService } from './application/delete-product.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -23,6 +24,7 @@ import { UpdateProductService } from './application/update-product.service';
     GetProductsService,
     GetSingleProductService,
     UpdateProductService,
+    DeleteProductService,
 
     {
       provide: FILE_UPLOADER_TOKEN,

@@ -26,4 +26,5 @@ export abstract class IProductRepository {
   abstract findOneWithCategory(id: string): Promise<TProductDetails | null>;
   abstract findOne(id: string): Promise<ProductEntity | null>;
   abstract updateOne(payload: ProductEntity): Promise<ProductEntity>;
+  abstract deleteOne(id: string): Promise<void>;
 }

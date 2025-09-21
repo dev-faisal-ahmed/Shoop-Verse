@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -24,6 +25,7 @@ import { AuthGuard } from 'src/common/guard/auth.guard';
 import { GetSingleProductService } from './application/get-single-product.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateProductService } from './application/update-product.service';
+import { DeleteProductService } from './application/delete-product.service';
 
 @UseGuards(AuthGuard)
 @Controller('products')
@@ -33,6 +35,7 @@ export class ProductController {
     private readonly getProductsService: GetProductsService,
     private readonly getSingleProductService: GetSingleProductService,
     private readonly updateProductService: UpdateProductService,
+    private readonly deleteProductService: DeleteProductService,
   ) {}
 
   @Post()
@@ -79,5 +82,12 @@ export class ProductController {
   ) {
     const response = await this.updateProductService.execute(id, dto, file);
     return ApiResponseDto.success('Product updated successfully', response);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteProduct(@Param('id') id: string) {
+    await this.deleteProductService.execute(id);
+    return ApiResponseDto.success('Product deleted successfully');
   }
 }
