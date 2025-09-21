@@ -6,9 +6,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
+
 import { Response } from 'express';
 import { ApiResponseDto } from '../dto/api-response.dto';
-import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -29,16 +33,25 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message = errorResponse.message.join(', ');
       else if (typeof errorResponse.message === 'string')
         message = errorResponse.message;
-    }
-
-    if (exception instanceof PrismaClientValidationError) {
+    } else if (exception instanceof PrismaClientKnownRequestError) {
+      switch (exception.code) {
+        case 'P2002':
+          message = 'Duplicate record already exists';
+          break;
+        case 'P2003':
+          message = `Failed reference constrains : ${(exception.meta as { constraint: string })?.constraint}`;
+          break;
+        case 'P2025':
+          message = 'Record not found';
+          break;
+      }
+    } else if (exception instanceof PrismaClientValidationError) {
       // Extract meaningful info
       const match = exception.message.match(/Argument `(.+?)` is missing/);
       if (match) {
         message = `Field "${match[1]}" is required`;
         status = HttpStatus.BAD_REQUEST;
       } else {
-        // fallback
         message = exception.message;
         status = HttpStatus.BAD_REQUEST;
       }

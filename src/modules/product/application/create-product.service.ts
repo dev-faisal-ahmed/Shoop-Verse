@@ -10,13 +10,12 @@ import { IProductRepository } from 'src/domain/product/product.repository.interf
 import { IFileUploader } from 'src/domain/shared/file-uploader.interface';
 import { IIdGenerator } from 'src/domain/shared/id-generator.interface';
 
-type TCreateProductService = {
+type TCreateProductServicePayload = {
   name: string;
   description: string;
   price: number;
   stock: number;
   categoryId: string;
-  imageFile: Express.Multer.File;
 };
 
 @Injectable()
@@ -30,11 +29,12 @@ export class CreateProductService {
     private productRepository: IProductRepository,
   ) {}
 
-  async execute({ imageFile, ...payload }: TCreateProductService) {
+  async execute(
+    payload: TCreateProductServicePayload,
+    imageFile: Express.Multer.File,
+  ) {
     let imageUrl = '';
     let imageId = '';
-
-    console.log(payload);
 
     try {
       if (imageFile) {
@@ -55,7 +55,12 @@ export class CreateProductService {
       return await this.productRepository.createProduct(product);
     } catch (error) {
       // delete image if product creation fails
-      if (imageId) void this.fileUploader.delete(imageId);
+      if (imageId) {
+        void this.fileUploader
+          .delete(imageId)
+          .catch((error) => console.error('Failed to delete image', error));
+      }
+
       throw error;
     }
   }

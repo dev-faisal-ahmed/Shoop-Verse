@@ -9,9 +9,8 @@ import { CATEGORY_REPOSITORY_TOKEN } from 'src/common/tokens';
 import { CategoryEntity } from 'src/domain/category/category.entity';
 import { ICategoryRepository } from 'src/domain/category/category.repository.interface';
 
-type TUpdateCategoryServicePayload = Pick<
-  CategoryEntity,
-  'id' | 'name' | 'description'
+type TUpdateCategoryServicePayload = Partial<
+  Pick<CategoryEntity, 'name' | 'description'>
 >;
 
 @Injectable()
@@ -21,7 +20,7 @@ export class UpdateCategoryService {
     private readonly categoryRepository: ICategoryRepository,
   ) {}
 
-  async execute({ id, ...payload }: TUpdateCategoryServicePayload) {
+  async execute(id: string, payload: TUpdateCategoryServicePayload) {
     const category = await this.categoryRepository.findById(id);
     if (!category) throw new NotFoundException('Category not found!');
 

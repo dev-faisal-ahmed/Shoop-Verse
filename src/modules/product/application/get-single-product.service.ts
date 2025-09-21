@@ -10,7 +10,7 @@ export class GetSingleProductService {
   ) {}
 
   async execute(id: string) {
-    const productDetails = await this.productRepository.findOne(id);
+    const productDetails = await this.productRepository.findOneWithCategory(id);
     if (!productDetails) throw new NotFoundException('Product not found');
 
     const { imageUrl, ...restProduct } = productDetails.product.toResponse();

@@ -23,5 +23,7 @@ export type TProductDetails = {
 export abstract class IProductRepository {
   abstract createProduct(payload: ProductEntity): Promise<ProductEntity>;
   abstract findAll(filter: TProductFilter): Promise<TProductWithPagination>;
-  abstract findOne(id: string): Promise<TProductDetails | null>;
+  abstract findOneWithCategory(id: string): Promise<TProductDetails | null>;
+  abstract findOne(id: string): Promise<ProductEntity | null>;
+  abstract updateOne(payload: ProductEntity): Promise<ProductEntity>;
 }

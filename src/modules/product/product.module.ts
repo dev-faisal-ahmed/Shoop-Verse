@@ -13,6 +13,7 @@ import { ProductPrismaRepository } from 'src/infrastructure/product/product-pris
 import { GetProductsService } from './application/get-products.service';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 import { GetSingleProductService } from './application/get-single-product.service';
+import { UpdateProductService } from './application/update-product.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -21,6 +22,7 @@ import { GetSingleProductService } from './application/get-single-product.servic
     CreateProductService,
     GetProductsService,
     GetSingleProductService,
+    UpdateProductService,
 
     {
       provide: FILE_UPLOADER_TOKEN,

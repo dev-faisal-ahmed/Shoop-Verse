@@ -63,7 +63,7 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() dto: UpdateCategoryDto,
   ) {
-    const response = await this.updateCategoryService.execute({ id, ...dto });
+    const response = await this.updateCategoryService.execute(id, dto);
     return ApiResponseDto.success('Category updated successfully', response);
   }
 

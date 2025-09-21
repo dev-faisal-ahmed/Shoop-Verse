@@ -32,6 +32,7 @@ export class ProductPrismaRepository implements IProductRepository {
     const prismaProduct = await this.prisma.product.create({
       data: product.toPersistence(),
     });
+
     return this.toDomain(prismaProduct);
   }
 
@@ -67,7 +68,7 @@ export class ProductPrismaRepository implements IProductRepository {
     };
   }
 
-  async findOne(id: string): Promise<TProductDetails | null> {
+  async findOneWithCategory(id: string): Promise<TProductDetails | null> {
     const product = await this.prisma.product.findUnique({
       where: { id },
       select: {
@@ -86,6 +87,27 @@ export class ProductPrismaRepository implements IProductRepository {
         description: product.category.description,
       }),
     };
+  }
+
+  async findOne(id: string): Promise<ProductEntity | null> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      select: this.getSelect(),
+    });
+
+    if (!product) return null;
+
+    return this.toDomain(product);
+  }
+
+  async updateOne({ id, ...payload }: ProductEntity): Promise<ProductEntity> {
+    const prismaProduct = await this.prisma.product.update({
+      where: { id },
+      data: payload,
+      select: this.getSelect(),
+    });
+
+    return this.toDomain(prismaProduct);
   }
 
   // helpers

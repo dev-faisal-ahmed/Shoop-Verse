@@ -16,27 +16,40 @@ type TProductResponse = Pick<
 
 export class ProductEntity {
   public readonly id: string;
-  public readonly name: string;
-  public readonly description: string;
-  public readonly price: number;
-  public readonly stock: number;
-  public readonly imageUrl: string;
-  public readonly imageId: string;
-  public readonly categoryId: string;
+  public name: string;
+  public description: string;
+  public price: number;
+  public stock: number;
+  public imageUrl: string;
+  public imageId: string;
+  public categoryId: string;
 
   constructor(props: TProductProps) {
     this.id = props.id;
     this.name = props.name;
     this.description = props.description;
     this.price = props.price;
+    this.stock = props.stock;
     this.imageUrl = props.imageUrl;
     this.imageId = props.imageId;
-    this.stock = props.stock;
     this.categoryId = props.categoryId;
   }
 
   static create(props: TProductProps): ProductEntity {
     return new ProductEntity(props);
+  }
+
+  update(props: Partial<Omit<TProductProps, 'id'>>): ProductEntity {
+    return ProductEntity.create({
+      id: this.id,
+      name: props.name ?? this.name,
+      description: props.description ?? this.description,
+      price: props.price ?? this.price,
+      stock: props.stock ?? this.stock,
+      imageUrl: props.imageUrl ?? this.imageUrl,
+      imageId: props.imageId ?? this.imageId,
+      categoryId: props.categoryId ?? this.categoryId,
+    });
   }
 
   toPersistence(): TProductProps {

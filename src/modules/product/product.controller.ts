@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -21,6 +22,8 @@ import { ProductFilterDto } from './dto/product-filter.dto';
 import { GetProductsService } from './application/get-products.service';
 import { AuthGuard } from 'src/common/guard/auth.guard';
 import { GetSingleProductService } from './application/get-single-product.service';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductService } from './application/update-product.service';
 
 @UseGuards(AuthGuard)
 @Controller('products')
@@ -29,6 +32,7 @@ export class ProductController {
     private readonly createProductService: CreateProductService,
     private readonly getProductsService: GetProductsService,
     private readonly getSingleProductService: GetSingleProductService,
+    private readonly updateProductService: UpdateProductService,
   ) {}
 
   @Post()
@@ -39,11 +43,7 @@ export class ProductController {
     file: Express.Multer.File,
     @Body() dto: CreateProductDto,
   ) {
-    const response = await this.createProductService.execute({
-      ...dto,
-      imageFile: file,
-    });
-
+    const response = await this.createProductService.execute(dto, file);
     return ApiResponseDto.success('Product created successfully', response);
   }
 
@@ -66,5 +66,18 @@ export class ProductController {
       'Product fetched successfully',
       productDetails,
     );
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('image'))
+  async updateProduct(
+    @Param('id') id: string,
+    @UploadedFile(ImageValidationPipe(1))
+    file: Express.Multer.File,
+    @Body() dto: UpdateProductDto,
+  ) {
+    const response = await this.updateProductService.execute(id, dto, file);
+    return ApiResponseDto.success('Product updated successfully', response);
   }
 }
