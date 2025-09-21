@@ -11,6 +11,26 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+
+import {
+  createCategoryApiResponse,
+  deleteCategoryApiResponse,
+  getCategoriesApiResponse,
+  getCategoryDetailsApiResponse,
+  updateCategoryApiResponse,
+} from './category.doc';
+
 import { CreateCategoryService } from './application/create-category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ApiResponseDto } from 'src/common/dto/api-response.dto';
@@ -21,6 +41,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { DeleteCategoryService } from './application/delete-category.service';
 import { GetCategoryDetailsService } from './application/get-category-details.service';
 
+@ApiTags('Category')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('categories')
 export class CategoryController {
@@ -34,6 +56,11 @@ export class CategoryController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new category' })
+  @ApiCreatedResponse(createCategoryApiResponse.success)
+  @ApiBadRequestResponse(createCategoryApiResponse.validationError)
+  @ApiUnauthorizedResponse(createCategoryApiResponse.unauthorized)
+  @ApiConflictResponse(createCategoryApiResponse.conflict)
   async createCategory(@Body() dto: CreateCategoryDto) {
     const response = await this.createCategoryService.execute(dto);
     return ApiResponseDto.success('Category created successfully', response);
@@ -41,6 +68,9 @@ export class CategoryController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all categories with product counts' })
+  @ApiOkResponse(getCategoriesApiResponse.success)
+  @ApiUnauthorizedResponse(getCategoriesApiResponse.unauthorized)
   async getCategories() {
     const response = await this.getCategoriesService.execute();
     return ApiResponseDto.success('Categories fetched successfully', response);
@@ -48,6 +78,10 @@ export class CategoryController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get details of a single category' })
+  @ApiOkResponse(getCategoryDetailsApiResponse.success)
+  @ApiNotFoundResponse(getCategoryDetailsApiResponse.notFound)
+  @ApiUnauthorizedResponse(getCategoryDetailsApiResponse.unauthorized)
   async getCategoryDetails(@Param('id') id: string) {
     const response = await this.getCategoryDetailsService.execute(id);
 
@@ -59,6 +93,11 @@ export class CategoryController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update a category' })
+  @ApiOkResponse(updateCategoryApiResponse.success)
+  @ApiNotFoundResponse(updateCategoryApiResponse.notFound)
+  @ApiUnauthorizedResponse(updateCategoryApiResponse.unauthorized)
+  @ApiConflictResponse(updateCategoryApiResponse.conflict)
   async updateCategory(
     @Param('id') id: string,
     @Body() dto: UpdateCategoryDto,
@@ -69,6 +108,11 @@ export class CategoryController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Delete a category' })
+  @ApiOkResponse(deleteCategoryApiResponse.success)
+  @ApiNotFoundResponse(deleteCategoryApiResponse.notFound)
+  @ApiUnauthorizedResponse(deleteCategoryApiResponse.unauthorized)
+  @ApiBadRequestResponse(deleteCategoryApiResponse.badRequest)
   async deleteCategory(@Param('id') id: string) {
     await this.deleteCategoryService.execute(id);
     return ApiResponseDto.success('Category deleted successfully');
