@@ -37,6 +37,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.use(cookieParser());
+  app.enableCors();
 
   await app.listen(process.env.PORT ?? 3000);
 }

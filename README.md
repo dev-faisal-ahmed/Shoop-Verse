@@ -89,11 +89,15 @@ The application will be available at `http://localhost:3000`
 
 ### Production API Access
 
-**Base URL**: `https://your-vercel-app-name.vercel.app` (Replace with your actual Vercel app URL)
+**Base URL**: `https://shop-verse-nine.vercel.app` (Replace with your actual Vercel app URL)
 
 ### API Documentation (Live)
 
-- **Swagger UI**: `https://your-vercel-app-name.vercel.app/api/docs`
+- **Swagger UI**: `https://shop-verse-nine.vercel.app/api/docs`
+
+### Database URL
+
+**DATABASE_URL**: `postgresql://neondb_owner:npg_27jBknoEiCDc@ep-misty-sea-a12vmod8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
 
 ### Vercel Deployment Notes
 

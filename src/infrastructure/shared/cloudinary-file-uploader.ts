@@ -9,18 +9,17 @@ import { cloudinary } from 'src/common/cloudinary.config';
 
 @Injectable()
 export class CloudinaryFileUploader implements IFileUploader {
-  upload(file: TFile): Promise<TUploadResult> {
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: 'product-images' },
-        (error, result) => {
-          if (error) return reject(new Error(error.message));
-          if (!result) return reject(new Error('Failed to upload image'));
-          resolve({ id: result.public_id, url: result.secure_url });
-        },
-      );
-      uploadStream.end(file.buffer);
+  async upload(file: TFile): Promise<TUploadResult> {
+    // Convert buffer to base64 data URI to avoid stream issues in serverless
+    const base64 = file.buffer.toString('base64');
+    const dataUri = `data:${file.mimetype};base64,${base64}`;
+
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: 'product-images',
+      resource_type: 'image',
     });
+
+    return { id: result.public_id, url: result.secure_url };
   }
 
   async delete(id: string): Promise<void> {

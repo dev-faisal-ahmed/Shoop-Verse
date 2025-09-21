@@ -49,6 +49,7 @@ import { UpdateProductService } from './application/update-product.service';
 import { DeleteProductService } from './application/delete-product.service';
 import { SearchProductFilterDto } from './dto/search-product-filter.dto';
 import { SearchProductService } from './application/search-product.service';
+import { memoryStorage } from 'multer';
 
 @ApiTags('Product')
 @ApiBearerAuth()
@@ -66,17 +67,23 @@ export class ProductController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: memoryStorage(),
+      limits: { fileSize: 1 * 1024 * 1024 }, // 1MB, keep in sync with ImageValidationPipe
+    }),
+  )
   @ApiOperation({ summary: 'Create a new product with an optional image' })
   @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse(createProductApiResponse.success)
   @ApiBadRequestResponse(createProductApiResponse.validationError)
   @ApiUnauthorizedResponse(createProductApiResponse.unauthorized)
   async createProduct(
-    @UploadedFile(ImageValidationPipe(1))
+    @UploadedFile(ImageValidationPipe())
     file: Express.Multer.File,
     @Body() dto: CreateProductDto,
   ) {
+    console.log(file);
     const response = await this.createProductService.execute(dto, file);
     return ApiResponseDto.success('Product created successfully', response);
   }
@@ -132,7 +139,12 @@ export class ProductController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: memoryStorage(),
+      limits: { fileSize: 1 * 1024 * 1024 }, // 1MB, keep in sync with ImageValidationPipe
+    }),
+  )
   @ApiOperation({ summary: 'Update a product with an optional new image' })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse(updateProductApiResponse.success)
@@ -140,7 +152,7 @@ export class ProductController {
   @ApiUnauthorizedResponse(updateProductApiResponse.unauthorized)
   async updateProduct(
     @Param('id') id: string,
-    @UploadedFile(ImageValidationPipe(1))
+    @UploadedFile(ImageValidationPipe())
     file: Express.Multer.File,
     @Body() dto: UpdateProductDto,
   ) {
