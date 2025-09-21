@@ -89,11 +89,43 @@ The application will be available at `http://localhost:3000`
 
 ### Production API Access
 
-**Base URL**: `https://your-api-domain.com` (Replace with your actual domain)
+**Base URL**: `https://your-vercel-app-name.vercel.app` (Replace with your actual Vercel app URL)
 
 ### API Documentation (Live)
 
-- **Swagger UI**: `https://your-api-domain.com/api/docs`
+- **Swagger UI**: `https://your-vercel-app-name.vercel.app/api/docs`
+
+### Vercel Deployment Notes
+
+- **Automatic Deployments**: Connect your GitHub repository to Vercel for automatic deployments
+- **Environment Variables**: Set all required environment variables in Vercel dashboard
+- **Database**: Use a hosted PostgreSQL service (Supabase, Neon, Railway, etc.)
+- **Build Command**: `npm run build`
+- **Output Directory**: `./dist`
+
+### Required Environment Variables for Vercel
+
+Make sure to add these in your Vercel project settings:
+
+```env
+# DB
+DATABASE_URL="your_production_database_url"
+
+# Access Token
+ACCESS_TOKEN_SECRET="your_production_jwt_secret"
+ACCESS_TOKEN_EXPIRES_IN="15m"
+REFRESH_TOKEN_SECRET="your_production_refresh_secret"
+REFRESH_TOKEN_EXPIRES_IN="7d"
+
+# Cloudinary Config
+CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
+CLOUDINARY_API_KEY="your_cloudinary_api_key"
+CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
+
+# Application
+NODE_ENV="production"
+PORT=3000
+```
 
 ## 📚 API Documentation
 

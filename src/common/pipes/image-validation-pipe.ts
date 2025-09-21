@@ -1,15 +1,9 @@
-import {
-  ParseFilePipe,
-  FileTypeValidator,
-  MaxFileSizeValidator,
-} from '@nestjs/common';
+import { ParseFilePipe } from '@nestjs/common';
+import { CustomImageValidatorPipe } from './custom-image-validator.pipe';
 
 export function ImageValidationPipe(maxSizeMB = 1) {
   return new ParseFilePipe({
-    validators: [
-      new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
-      new MaxFileSizeValidator({ maxSize: maxSizeMB * 1024 * 1024 }),
-    ],
+    validators: [new CustomImageValidatorPipe({ maxSizeMB })],
     fileIsRequired: false,
   });
 }

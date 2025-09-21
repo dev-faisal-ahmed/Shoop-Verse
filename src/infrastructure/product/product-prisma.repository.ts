@@ -33,7 +33,6 @@ export class ProductPrismaRepository implements IProductRepository {
 
   // create product
   async createProduct(product: ProductEntity): Promise<ProductEntity> {
-    console.log('Creating product: ', product);
     const prismaProduct = await this.prisma.product.create({
       data: product.toPersistence(),
     });
