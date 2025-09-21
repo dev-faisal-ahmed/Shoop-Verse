@@ -1,5 +1,6 @@
 import {
   IProductRepository,
+  TProductDetails,
   TProductFilter,
   TProductWithPagination,
 } from 'src/domain/product/product.repository.interface';
@@ -8,6 +9,7 @@ import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { ProductEntity } from 'src/domain/product/product.entity';
+import { CategoryEntity } from 'src/domain/category/category.entity';
 
 type TProductModel = Prisma.ProductGetPayload<{
   select: {
@@ -62,6 +64,27 @@ export class ProductPrismaRepository implements IProductRepository {
     return {
       products: productEntities,
       meta: { page, limit, total, totalPage },
+    };
+  }
+
+  async findOne(id: string): Promise<TProductDetails | null> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      select: {
+        ...this.getSelect(),
+        category: { select: { id: true, name: true, description: true } },
+      },
+    });
+
+    if (!product) return null;
+
+    return {
+      product: this.toDomain(product),
+      category: CategoryEntity.create({
+        id: product.category.id,
+        name: product.category.name,
+        description: product.category.description,
+      }),
     };
   }
 

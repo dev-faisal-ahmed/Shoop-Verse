@@ -1,5 +1,6 @@
 import { TMeta } from 'src/common/dto/api-response.dto';
 import { ProductEntity } from './product.entity';
+import { CategoryEntity } from '../category/category.entity';
 
 export type TProductFilter = {
   categoryId?: string;
@@ -14,7 +15,13 @@ export type TProductWithPagination = {
   meta: TMeta;
 };
 
+export type TProductDetails = {
+  product: ProductEntity;
+  category: CategoryEntity;
+};
+
 export abstract class IProductRepository {
   abstract createProduct(payload: ProductEntity): Promise<ProductEntity>;
   abstract findAll(filter: TProductFilter): Promise<TProductWithPagination>;
+  abstract findOne(id: string): Promise<TProductDetails | null>;
 }

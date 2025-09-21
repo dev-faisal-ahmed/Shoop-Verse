@@ -12,6 +12,7 @@ import { CryptoIdGenerator } from 'src/infrastructure/shared/crypto-id-generator
 import { ProductPrismaRepository } from 'src/infrastructure/product/product-prisma.repository';
 import { GetProductsService } from './application/get-products.service';
 import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
+import { GetSingleProductService } from './application/get-single-product.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -19,6 +20,7 @@ import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
   providers: [
     CreateProductService,
     GetProductsService,
+    GetSingleProductService,
 
     {
       provide: FILE_UPLOADER_TOKEN,

@@ -4,6 +4,8 @@ export type TCategoryProps = {
   description: string;
 };
 
+type TCategoryResponse = Pick<TCategoryProps, 'id' | 'name' | 'description'>;
+
 export class CategoryEntity {
   public readonly id: string;
   public name: string;
@@ -29,5 +31,13 @@ export class CategoryEntity {
 
   toPersistence(): TCategoryProps {
     return { id: this.id, name: this.name, description: this.description };
+  }
+
+  toResponse(): TCategoryResponse {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+    };
   }
 }

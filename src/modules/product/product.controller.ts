@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
   UploadedFile,
@@ -19,6 +20,7 @@ import { ImageValidationPipe } from 'src/common/pipes/image-validation-pipe';
 import { ProductFilterDto } from './dto/product-filter.dto';
 import { GetProductsService } from './application/get-products.service';
 import { AuthGuard } from 'src/common/guard/auth.guard';
+import { GetSingleProductService } from './application/get-single-product.service';
 
 @UseGuards(AuthGuard)
 @Controller('products')
@@ -26,6 +28,7 @@ export class ProductController {
   constructor(
     private readonly createProductService: CreateProductService,
     private readonly getProductsService: GetProductsService,
+    private readonly getSingleProductService: GetSingleProductService,
   ) {}
 
   @Post()
@@ -52,6 +55,16 @@ export class ProductController {
       'Products fetched successfully',
       products,
       meta,
+    );
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getSingleProduct(@Param('id') id: string) {
+    const productDetails = await this.getSingleProductService.execute(id);
+    return ApiResponseDto.success(
+      'Product fetched successfully',
+      productDetails,
     );
   }
 }
