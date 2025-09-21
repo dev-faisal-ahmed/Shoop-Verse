@@ -20,9 +20,21 @@ export type TProductDetails = {
   category: CategoryEntity;
 };
 
+export type TProductSearchResult = {
+  products: ProductEntity[];
+  meta: TMeta;
+};
+
+export type TProductSearchFilter = {
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
 export abstract class IProductRepository {
   abstract createProduct(payload: ProductEntity): Promise<ProductEntity>;
   abstract findAll(filter: TProductFilter): Promise<TProductWithPagination>;
+  abstract search(filter: TProductSearchFilter): Promise<TProductSearchResult>;
   abstract findOneWithCategory(id: string): Promise<TProductDetails | null>;
   abstract findOne(id: string): Promise<ProductEntity | null>;
   abstract updateOne(payload: ProductEntity): Promise<ProductEntity>;

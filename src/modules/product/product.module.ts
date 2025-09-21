@@ -15,6 +15,7 @@ import { AuthGuardModule } from 'src/common/guard/auth.guard.module';
 import { GetSingleProductService } from './application/get-single-product.service';
 import { UpdateProductService } from './application/update-product.service';
 import { DeleteProductService } from './application/delete-product.service';
+import { SearchProductService } from './application/search-product.service';
 
 @Module({
   imports: [AuthGuardModule],
@@ -22,6 +23,7 @@ import { DeleteProductService } from './application/delete-product.service';
   providers: [
     CreateProductService,
     GetProductsService,
+    SearchProductService,
     GetSingleProductService,
     UpdateProductService,
     DeleteProductService,

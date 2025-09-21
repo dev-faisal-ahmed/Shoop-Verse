@@ -2,6 +2,8 @@ import {
   IProductRepository,
   TProductDetails,
   TProductFilter,
+  TProductSearchFilter,
+  TProductSearchResult,
   TProductWithPagination,
 } from 'src/domain/product/product.repository.interface';
 
@@ -10,6 +12,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { ProductEntity } from 'src/domain/product/product.entity';
 import { CategoryEntity } from 'src/domain/category/category.entity';
+import { TMeta } from 'src/common/dto/api-response.dto';
 
 type TProductModel = Prisma.ProductGetPayload<{
   select: {
@@ -27,6 +30,8 @@ type TProductModel = Prisma.ProductGetPayload<{
 @Injectable()
 export class ProductPrismaRepository implements IProductRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  // create product
   async createProduct(product: ProductEntity): Promise<ProductEntity> {
     console.log('Creating product: ', product);
     const prismaProduct = await this.prisma.product.create({
@@ -36,6 +41,7 @@ export class ProductPrismaRepository implements IProductRepository {
     return this.toDomain(prismaProduct);
   }
 
+  // find all products with pagination
   async findAll(filter: TProductFilter): Promise<TProductWithPagination> {
     const { categoryId, minPrice, maxPrice, page = 1, limit = 10 } = filter;
 
@@ -52,22 +58,53 @@ export class ProductPrismaRepository implements IProductRepository {
     const products = await this.prisma.product.findMany({
       where,
       select: this.getSelect(),
-      skip: (page - 1) * limit,
+      skip: this.getSkip(page, limit),
       take: limit,
       orderBy: { createdAt: 'desc' },
     });
 
     const total = await this.prisma.product.count({ where });
-    const totalPage = Math.ceil(total / limit);
-
     const productEntities = products.map((product) => this.toDomain(product));
 
     return {
       products: productEntities,
-      meta: { page, limit, total, totalPage },
+      meta: this.getMeta(page, limit, total),
     };
   }
 
+  // search products with pagination
+  async search(filter: TProductSearchFilter): Promise<TProductSearchResult> {
+    const { search, page = 1, limit = 10 } = filter;
+
+    const where: Prisma.ProductWhereInput = {
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+    };
+
+    const prismaProduct = await this.prisma.product.findMany({
+      where,
+      select: this.getSelect(),
+      skip: this.getSkip(page, limit),
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const total = await this.prisma.product.count({ where });
+    const productEntities = prismaProduct.map((product) =>
+      this.toDomain(product),
+    );
+
+    return {
+      products: productEntities,
+      meta: this.getMeta(page, limit, total),
+    };
+  }
+
+  // find one product with category
   async findOneWithCategory(id: string): Promise<TProductDetails | null> {
     const product = await this.prisma.product.findUnique({
       where: { id },
@@ -89,6 +126,7 @@ export class ProductPrismaRepository implements IProductRepository {
     };
   }
 
+  // find one product
   async findOne(id: string): Promise<ProductEntity | null> {
     const product = await this.prisma.product.findUnique({
       where: { id },
@@ -100,6 +138,7 @@ export class ProductPrismaRepository implements IProductRepository {
     return this.toDomain(product);
   }
 
+  // update one product
   async updateOne({ id, ...payload }: ProductEntity): Promise<ProductEntity> {
     const prismaProduct = await this.prisma.product.update({
       where: { id },
@@ -110,6 +149,7 @@ export class ProductPrismaRepository implements IProductRepository {
     return this.toDomain(prismaProduct);
   }
 
+  // delete one product
   async deleteOne(id: string): Promise<void> {
     await this.prisma.product.delete({ where: { id } });
   }
@@ -128,7 +168,7 @@ export class ProductPrismaRepository implements IProductRepository {
     });
   }
 
-  getSelect(): Prisma.ProductSelect {
+  private getSelect(): Prisma.ProductSelect {
     return {
       id: true,
       name: true,
@@ -139,5 +179,13 @@ export class ProductPrismaRepository implements IProductRepository {
       imageId: true,
       categoryId: true,
     };
+  }
+
+  private getSkip(page: number, limit: number): number {
+    return (page - 1) * limit;
+  }
+
+  private getMeta(page: number, limit: number, total: number): TMeta {
+    return { page, limit, total, totalPage: Math.ceil(total / limit) };
   }
 }

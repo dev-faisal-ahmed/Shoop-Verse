@@ -26,6 +26,8 @@ import { GetSingleProductService } from './application/get-single-product.servic
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateProductService } from './application/update-product.service';
 import { DeleteProductService } from './application/delete-product.service';
+import { SearchProductFilterDto } from './dto/search-product-filter.dto';
+import { SearchProductService } from './application/search-product.service';
 
 @UseGuards(AuthGuard)
 @Controller('products')
@@ -33,6 +35,7 @@ export class ProductController {
   constructor(
     private readonly createProductService: CreateProductService,
     private readonly getProductsService: GetProductsService,
+    private readonly searchProductService: SearchProductService,
     private readonly getSingleProductService: GetSingleProductService,
     private readonly updateProductService: UpdateProductService,
     private readonly deleteProductService: DeleteProductService,
@@ -56,6 +59,24 @@ export class ProductController {
     const { products, meta } = await this.getProductsService.execute(query);
     return ApiResponseDto.success(
       'Products fetched successfully',
+      products,
+      meta,
+    );
+  }
+
+  @Get('search')
+  @HttpCode(HttpStatus.OK)
+  async searchProducts(@Query() query: SearchProductFilterDto) {
+    const { products, meta } = await this.searchProductService.execute({
+      search: query.q,
+      page: query.page,
+      limit: query.limit,
+    });
+
+    return ApiResponseDto.success(
+      query.q
+        ? `Search results for "${query.q}"`
+        : 'Please provide a search query',
       products,
       meta,
     );

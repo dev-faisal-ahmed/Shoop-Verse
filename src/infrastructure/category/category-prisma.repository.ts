@@ -16,6 +16,7 @@ type CategoryModel = Prisma.CategoryGetPayload<{
 export class CategoryPrismaRepository implements ICategoryRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  // create category
   async create(category: CategoryEntity): Promise<CategoryEntity> {
     const prismaCategory = await this.prismaService.category.create({
       data: category.toPersistence(),
@@ -25,6 +26,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return this.toDomain(prismaCategory);
   }
 
+  // check category exist by name
   async isCategoryExistByName(name: string): Promise<boolean> {
     const category = await this.prismaService.category.findUnique({
       where: { name },
@@ -34,6 +36,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return !!category;
   }
 
+  // update category
   async update(category: CategoryEntity): Promise<CategoryEntity> {
     const prismaCategory = await this.prismaService.category.update({
       where: { id: category.id },
@@ -47,6 +50,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return this.toDomain(prismaCategory);
   }
 
+  // find all categories with product count
   async findAllWithProductCount(): Promise<TCategoryWithProductCount[]> {
     const categories = await this.prismaService.category.findMany({
       select: { ...this.getSelect(), products: { select: { id: true } } },
@@ -58,6 +62,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     }));
   }
 
+  // find category by id
   async findById(id: string): Promise<CategoryEntity | null> {
     const category = await this.prismaService.category.findUnique({
       where: { id },
@@ -69,6 +74,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     return this.toDomain(category);
   }
 
+  // find category by id with product count
   async findOneWithProductCount(
     id: string,
   ): Promise<TCategoryWithProductCount | null> {
@@ -85,6 +91,7 @@ export class CategoryPrismaRepository implements ICategoryRepository {
     };
   }
 
+  // delete category
   async deleteOne(id: string): Promise<void> {
     await this.prismaService.category.delete({ where: { id } });
   }
