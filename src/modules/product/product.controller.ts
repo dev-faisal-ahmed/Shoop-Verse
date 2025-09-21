@@ -14,6 +14,27 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+
+import {
+  createProductApiResponse,
+  deleteProductApiResponse,
+  getProductDetailsApiResponse,
+  getProductsApiResponse,
+  searchProductsApiResponse,
+  updateProductApiResponse,
+} from './product.doc';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiResponseDto } from 'src/common/dto/api-response.dto';
 import { CreateProductService } from './application/create-product.service';
@@ -29,6 +50,8 @@ import { DeleteProductService } from './application/delete-product.service';
 import { SearchProductFilterDto } from './dto/search-product-filter.dto';
 import { SearchProductService } from './application/search-product.service';
 
+@ApiTags('Product')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('products')
 export class ProductController {
@@ -44,6 +67,11 @@ export class ProductController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: 'Create a new product with an optional image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiCreatedResponse(createProductApiResponse.success)
+  @ApiBadRequestResponse(createProductApiResponse.validationError)
+  @ApiUnauthorizedResponse(createProductApiResponse.unauthorized)
   async createProduct(
     @UploadedFile(ImageValidationPipe(1))
     file: Express.Multer.File,
@@ -55,6 +83,9 @@ export class ProductController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get a paginated list of products with filters' })
+  @ApiOkResponse(getProductsApiResponse.success)
+  @ApiUnauthorizedResponse(getProductsApiResponse.unauthorized)
   async getProducts(@Query() query: ProductFilterDto) {
     const { products, meta } = await this.getProductsService.execute(query);
     return ApiResponseDto.success(
@@ -66,6 +97,9 @@ export class ProductController {
 
   @Get('search')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Search for products by name or description' })
+  @ApiOkResponse(searchProductsApiResponse.success)
+  @ApiUnauthorizedResponse(searchProductsApiResponse.unauthorized)
   async searchProducts(@Query() query: SearchProductFilterDto) {
     const { products, meta } = await this.searchProductService.execute({
       search: query.q,
@@ -84,6 +118,10 @@ export class ProductController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get details of a single product' })
+  @ApiOkResponse(getProductDetailsApiResponse.success)
+  @ApiNotFoundResponse(getProductDetailsApiResponse.notFound)
+  @ApiUnauthorizedResponse(getProductDetailsApiResponse.unauthorized)
   async getSingleProduct(@Param('id') id: string) {
     const productDetails = await this.getSingleProductService.execute(id);
     return ApiResponseDto.success(
@@ -95,6 +133,11 @@ export class ProductController {
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: 'Update a product with an optional new image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiOkResponse(updateProductApiResponse.success)
+  @ApiNotFoundResponse(updateProductApiResponse.notFound)
+  @ApiUnauthorizedResponse(updateProductApiResponse.unauthorized)
   async updateProduct(
     @Param('id') id: string,
     @UploadedFile(ImageValidationPipe(1))
@@ -107,6 +150,10 @@ export class ProductController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Delete a product' })
+  @ApiOkResponse(deleteProductApiResponse.success)
+  @ApiNotFoundResponse(deleteProductApiResponse.notFound)
+  @ApiUnauthorizedResponse(deleteProductApiResponse.unauthorized)
   async deleteProduct(@Param('id') id: string) {
     await this.deleteProductService.execute(id);
     return ApiResponseDto.success('Product deleted successfully');
