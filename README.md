@@ -89,11 +89,11 @@ The application will be available at `http://localhost:3000`
 
 ### Production API Access
 
-**Base URL**: `https://shop-verse-nine.vercel.app` (Replace with your actual Vercel app URL)
+**Base URL**: https://shop-verse-nine.vercel.app
 
 ### API Documentation (Live)
 
-- **Swagger UI**: `https://shop-verse-nine.vercel.app/api/docs`
+- **Swagger UI**: https://shop-verse-nine.vercel.app/api/docs
 
 ### Database URL
 
@@ -287,30 +287,3 @@ The API uses JWT (JSON Web Tokens) for authentication:
 - `POST /products` - Create new product (Admin)
 - `PUT /products/:id` - Update product (Admin)
 - `DELETE /products/:id` - Delete product (Admin)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and add tests
-4. Run formatting: `npm run format`
-5. Run linting: `npm run lint`
-6. Commit your changes: `git commit -am 'Add feature'`
-7. Push to the branch: `git push origin feature-name`
-8. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the UNLICENSED License.
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-
-1. Check the API documentation at `/api/docs`
-2. Review the project issues on GitHub
-3. Create a new issue with detailed information
-
----
-
-**Happy coding! 🎉**
